@@ -1,0 +1,29 @@
+version: "3.8"
+
+volumes:
+  keycloak_data:
+
+services:
+  keycloak:
+    image: jboss/keycloak:15.0.2
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      DB_VENDOR: postgres
+      DB_ADDR: keycloak-db
+      DB_USER: keycloak
+      DB_PASSWORD: keycloak
+    ports:
+      - 8080:8080
+      - 8443:8443
+    depends_on:
+      - keycloak-db
+
+  keycloak-db:
+    image: postgres:14
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
